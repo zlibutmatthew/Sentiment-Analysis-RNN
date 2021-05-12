@@ -119,3 +119,48 @@ for example in ds_raw_train:
     token_counts.update(tokens)
     
 print('Vocab-size:', len(token_counts))
+
+# + colab={"base_uri": "https://localhost:8080/"} id="Yd5xlJPXtMod" executionInfo={"status": "ok", "timestamp": 1620791592346, "user_tz": 300, "elapsed": 435, "user": {"displayName": "Caleb Anyaeche", "photoUrl": "", "userId": "02380624916791193636"}} outputId="5d79fdc8-707b-41c2-8f64-eb0f50f2f696"
+## Encoding each unique token into integers
+
+encoder = tfds.deprecated.text.TokenTextEncoder(token_counts)
+
+example_str = 'This is an example!'
+encoder.encode(example_str)
+
+
+# + id="N6K115AJtXRp" executionInfo={"status": "ok", "timestamp": 1620791657527, "user_tz": 300, "elapsed": 388, "user": {"displayName": "Caleb Anyaeche", "photoUrl": "", "userId": "02380624916791193636"}}
+## Define the function for transformation
+
+def encode(text_tensor, label):
+    text = text_tensor.numpy()[0]
+    encoded_text = encoder.encode(text)
+    return encoded_text, label
+
+## Wrap the encode function to a TF Op.
+def encode_map_fn(text, label):
+    return tf.py_function(encode, inp=[text, label], 
+                          Tout=(tf.int64, tf.int64))
+
+
+# + colab={"base_uri": "https://localhost:8080/"} id="s3cbJ2VAth97" executionInfo={"status": "ok", "timestamp": 1620791690947, "user_tz": 300, "elapsed": 1063, "user": {"displayName": "Caleb Anyaeche", "photoUrl": "", "userId": "02380624916791193636"}} outputId="ef743ea8-5a55-49b3-a558-56174f7bc1c3"
+ds_train = ds_raw_train.map(encode_map_fn)
+ds_valid = ds_raw_valid.map(encode_map_fn)
+ds_test = ds_raw_test.map(encode_map_fn)
+
+tf.random.set_seed(1)
+for example in ds_train.shuffle(1000).take(5):
+    print('Sequence length:', example[0].shape)
+
+example
+
+# + id="EXeYLPn1uOEm" executionInfo={"status": "ok", "timestamp": 1620791851759, "user_tz": 300, "elapsed": 619, "user": {"displayName": "Caleb Anyaeche", "photoUrl": "", "userId": "02380624916791193636"}}
+## batching the datasets
+train_data = ds_train.padded_batch(
+    32, padded_shapes=([-1],[]))
+
+valid_data = ds_valid.padded_batch(
+    32, padded_shapes=([-1],[]))
+
+test_data = ds_test.padded_batch(
+    32, padded_shapes=([-1],[]))
