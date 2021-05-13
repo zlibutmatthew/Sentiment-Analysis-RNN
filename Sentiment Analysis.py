@@ -277,13 +277,13 @@ print('Test Acc.: {:.2f}%'.format(results[1]*100))
 
 # ### Results
 # Accuracy for each model
-# 1. A Simple RNN and * epochs:
-# 2. A RNN with 1 GRU Layer and * epochs: 
-# 3. A RNN with 1 LSTM Layer and * epochs:
+# 1. A Simple RNN and 2 epochs: 84.91%
+# 2. A RNN with 1 GRU Layer and 3 epochs: 86.63%
+# 3. A RNN with 1 LSTM Layer and 1 epochs: 87.04%
 # 4. A RNN with 2 GRU Layer and 5 epochs: 84.48%
-# 5. A RNN with 2 LSTM Layer and * epochs:
+# 5. A RNN with 2 LSTM Layer and 1 epochs: 86.36%
 
 # ### Conclusion and Future Work
-# The *** model was shown to have the best accuracy. If training time weren't an issue, we would be able to train models with much a much more complex layer structure. The future work would to do that. 
+# The LSTM model trained with 1 epoch was shown to have the best accuracy of 87.04%. If training time weren't an issue, we would be able to train models with much a much more complex layer structure. The future work would to do that. 
 
 
